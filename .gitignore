@@ -1,0 +1,7 @@
+/target
+/dist
+/site/game
+scrapforge_save.json
+blueprint.json
+*.log
+.DS_Store

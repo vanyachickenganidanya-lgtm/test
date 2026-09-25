@@ -1,0 +1,42 @@
+[package]
+name = "scrapforge"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "ScrapForge - a tiny open-source building/contraption sandbox inspired by Scrap Mechanic. Built with Bevy. Zero textures, zero baked assets."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/vanyachickenganidanya-lgtm/test"
+readme = "README.md"
+keywords = ["game", "bevy", "voxel", "sandbox", "physics"]
+categories = ["games"]
+default-run = "scrapforge"
+
+[[bin]]
+name = "scrapforge"
+path = "src/main.rs"
+
+[dependencies]
+bevy = "0.16.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# ---------------------------------------------------------------------------
+# Small binaries: no debug info, size-optimised, LTO'd and stripped.
+# A full Scrap Mechanic install is ~9 GB. ScrapForge ships as ~10 MB.
+# ---------------------------------------------------------------------------
+[profile.release]
+opt-level = "s"
+lto = "thin"
+codegen-units = 16
+panic = "abort"
+strip = true
+debug = false
+incremental = false
+
+[profile.dev]
+opt-level = 1
+debug = false
+strip = "debuginfo"
+
+[profile.dev.package."*"]
+opt-level = 2

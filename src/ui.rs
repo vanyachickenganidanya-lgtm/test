@@ -328,7 +328,8 @@ pub fn update_hud(
             "ScrapForge 0.1.0   {:.0} fps\n\
              xyz {:.1} {:.1} {:.1}   {}\n\
              blocks {}   creations {}   seed {}\n\
-             tool {}   part {}   rot {}   colour {}",
+             tool {}   part {}   rot {}   colour {}\n\
+             aim: {}",
             fps,
             pos.x,
             pos.y,
@@ -341,6 +342,7 @@ pub fn update_hud(
             def(editor.current_part()).name,
             editor.rot,
             editor.color,
+            if editor.hint.is_empty() { "-" } else { &editor.hint },
         );
     }
 

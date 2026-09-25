@@ -364,7 +364,7 @@ pub fn build_block_mesh(
 ) -> Mesh {
     let mut mb = MeshBuilder::new();
     let mut solid: HashMap<IVec3, bool> = HashMap::new();
-    if let Some(map) = neighbors {
+    if let Some(_map) = neighbors {
         for (c, b) in blocks {
             let cell = *c + offset;
             solid.insert(cell, matches!(def(b.part).shape, Shape::Cube));
@@ -417,7 +417,7 @@ pub fn build_terrain_chunk(chunk: IVec2, seed: u32) -> Mesh {
             let n = terrain::normal_at(x + step * 0.5, z + step * 0.5, seed);
             let slope = terrain::slope_at(x + step * 0.5, z + step * 0.5, seed);
             let avg_h = (h00 + h10 + h01 + h11) * 0.25;
-            let mut col = terrain::color_at(avg_h, slope, seed, x, z);
+            let col = terrain::color_at(avg_h, slope, seed, x, z);
 
             // Two triangles, shaded with the analytic normal so the terrain
             // looks smooth even at 2 m resolution.
@@ -426,7 +426,6 @@ pub fn build_terrain_chunk(chunk: IVec2, seed: u32) -> Mesh {
             let i2 = mb.push(c, n, col);
             let i3 = mb.push(d, n, col);
             mb.idx.extend_from_slice(&[i0, i1, i2, i0, i2, i3]);
-            let _ = &mut col;
         }
     }
     mb.build()

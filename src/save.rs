@@ -10,7 +10,7 @@ pub const SAVE_PATH: &str = "scrapforge_save.json";
 pub const FORMAT_VERSION: u32 = 1;
 
 #[derive(serde::Serialize, serde::Deserialize)]
-struct SavedBlock {
+pub struct SavedBlock {
     c: [i32; 3],
     p: u16,
     r: u8,
@@ -19,7 +19,7 @@ struct SavedBlock {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-struct SavedLink {
+pub struct SavedLink {
     a: [i32; 3],
     b: [i32; 3],
 }

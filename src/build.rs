@@ -6,10 +6,10 @@ use std::collections::HashMap;
 
 use bevy::prelude::*;
 
-use crate::blocks::{def, paintable, Block, Category, Behavior, P_BLOCK, P_PLATE, P_WEDGE, P_CYLINDER, P_SPHERE, P_FRAME, P_WHEEL, P_SEAT, P_ENGINE, P_THRUSTER, P_GYRO, P_SWITCH, P_LIGHT, P_SPUDGUN};
+use crate::blocks::{def, paintable, Behavior, Block, Category, P_BLOCK, P_CYLINDER, P_ENGINE, P_FRAME, P_LIGHT, P_PLATE, P_SEAT, P_THRUSTER, P_WEDGE, P_WHEEL};
 use crate::meshgen;
 use crate::physics;
-use crate::player::{self, Player, EYE_HEIGHT};
+use crate::player::Player;
 use crate::world::{BlockWorld, Creation, HitKind, RayHit};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -56,6 +56,7 @@ pub struct Editor {
     pub last_place: f32,
     pub message: String,
     pub message_timer: f32,
+    pub hint: String,
 }
 
 impl Default for Editor {
@@ -80,6 +81,7 @@ impl Default for Editor {
             last_place: 0.0,
             message: String::new(),
             message_timer: 0.0,
+            hint: String::new(),
         }
     }
 }
@@ -442,7 +444,7 @@ pub fn paste_creation(world: &mut BlockWorld, editor: &mut Editor, hit: &RayHit)
 // ---------------------------------------------------------------------------
 
 /// Picks up the hovered creation (or drops the one being carried).
-pub fn toggle_lift(world: &mut BlockWorld, editor: &mut Editor, player: &Player, eye: Vec3, dir: Vec3) {
+pub fn toggle_lift(world: &mut BlockWorld, editor: &mut Editor, _player: &Player, eye: Vec3, dir: Vec3) {
     if let Some(id) = editor.lifted.take() {
         world.freeze(id);
         editor.say("Dropped");
@@ -464,7 +466,7 @@ pub fn toggle_lift(world: &mut BlockWorld, editor: &mut Editor, player: &Player,
 }
 
 /// Keeps the lifted creation in front of the player.
-pub fn update_lifted(world: &mut BlockWorld, editor: &Editor, player: &Player, eye: Vec3, dir: Vec3) {
+pub fn update_lifted(world: &mut BlockWorld, editor: &Editor, _player: &Player, eye: Vec3, dir: Vec3) {
     let Some(id) = editor.lifted else { return };
     let Some(idx) = world.creations.iter().position(|c| c.id == id) else {
         return;
@@ -478,7 +480,6 @@ pub fn update_lifted(world: &mut BlockWorld, editor: &Editor, player: &Player, e
     c.body.rot = Quat::IDENTITY;
     c.body.vel = Vec3::ZERO;
     c.body.ang_vel = Vec3::ZERO;
-    let _ = player;
 }
 
 /// Rotates the lifted creation by 90 degrees.
@@ -569,10 +570,10 @@ pub fn describe_hit(world: &BlockWorld, hit: Option<&RayHit>) -> String {
         Some(hit) => match hit.kind {
             HitKind::Terrain => "terrain".to_string(),
             HitKind::StaticBlock { cell } => match world.blocks.get(&cell) {
-                Some(b) => format!("{} @ {}", def(b.part).name, cell),
+                Some(b) => format!("{} @ {},{},{}", def(b.part).name, cell.x, cell.y, cell.z),
                 None => String::new(),
             },
-            HitKind::DynamicBlock { cell, .. } => format!("moving part @ {}", cell),
+            HitKind::DynamicBlock { cell, .. } => format!("moving part @ {},{},{}", cell.x, cell.y, cell.z),
         },
     }
 }

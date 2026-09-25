@@ -12,7 +12,7 @@ use crate::terrain;
 
 pub const SECTION_SIZE: i32 = 16;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub struct SectionView {
     pub entity: Entity,
     pub mesh: Handle<Mesh>,
@@ -34,7 +34,7 @@ pub fn floor_div(a: i32, b: i32) -> i32 {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Creation {
     pub id: u32,
     pub dynamic: bool,

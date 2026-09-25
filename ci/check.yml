@@ -1,0 +1,88 @@
+# ScrapForge — continuous integration: format, clippy and build on all platforms.
+#
+# HOW TO INSTALL:
+#   mkdir -p .github/workflows
+#   cp ci/check.yml .github/workflows/check.yml
+#   git add .github && git commit -m "ci: checks" && git push
+
+name: Check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu
+            os: ubuntu-22.04
+            deps: |
+              sudo apt-get update
+              sudo apt-get install -y --no-install-recommends \
+                libasound2-dev libudev-dev pkg-config build-essential
+          - name: windows
+            os: windows-latest
+            deps: ""
+          - name: macos
+            os: macos-latest
+            deps: ""
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-check-${{ hashFiles('**/Cargo.toml') }}
+
+      - name: Install system dependencies
+        if: matrix.deps != ''
+        shell: bash
+        run: ${{ matrix.deps }}
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets
+
+      - name: Build (debug)
+        run: cargo build --verbose
+
+      - name: Build (release, size report)
+        shell: bash
+        run: |
+          cargo build --release
+          du -h target/release/scrapforge*
+
+  pages:
+    name: Verify site build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that the site folder is intact
+        run: |
+          test -f docs/index.html
+          test -f docs/style.css
+          test -f docs/app.js
+          echo "GitHub Pages source: /docs"

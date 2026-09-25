@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ScrapForge — открытая песочница для контрапций на Bevy (~10 МБ)</title>
+<meta name="description" content="ScrapForge — клон Scrap Mechanic на движке Bevy: процедурный мир, свои физика и логика, 33 детали, ноль текстур, ~10 МБ вместо 9 ГБ. Играйте прямо в браузере." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="cube-field" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="badge">открытый исходный код · MIT / Apache-2.0 · Bevy + Rust</div>
+    <h1>Scrap<span>Forge</span></h1>
+    <p class="tagline">
+      Песочница для строительства и контрапций в духе Scrap Mechanic, но на Bevy:
+      процедурный мир, собственная физика, логика и <strong>33 детали</strong>.
+      Ни одной текстуры и ни одного ассета — весь вес игры ~10 МБ.
+    </p>
+    <div class="cta">
+      <a class="btn primary" id="play-btn" href="game/">▶ Играть в браузере</a>
+      <a class="btn" id="dl-btn" href="https://github.com/vanyachickenganidanya-lgtm/test/releases/latest">⬇ Скачать</a>
+      <a class="btn ghost" href="https://github.com/vanyachickenganidanya-lgtm/test">⌥ Исходники</a>
+    </div>
+    <div class="stats">
+      <div><b id="stat-size">~10</b><span>МБ вес игры</span></div>
+      <div><b>33</b><span>детали и блоки</span></div>
+      <div><b>0</b><span>текстур и ассетов</span></div>
+      <div><b>4</b><span>платформы</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap">
+    <a href="#play">Геймплей</a>
+    <a href="#features">Что внутри</a>
+    <a href="#better">Чем лучше</a>
+    <a href="#changelog">Что нового</a>
+    <a href="#downloads">Скачать</a>
+    <a href="#controls">Управление</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="play">
+  <h2>Геймплей</h2>
+  <p class="lead">
+    Сборка запускается прямо в браузере на WebGL2 — ничего устанавливать не нужно.
+    Соберите машинку из блоков, поставьте колёса, двигатель и сиденье, нажмите
+    <kbd>E</kbd> — и поехали.
+  </p>
+  <div class="player" id="player">
+    <div class="player-frame">
+      <iframe id="game-frame" src="game/" title="ScrapForge в браузере" allowfullscreen></iframe>
+    </div>
+    <div class="player-note" id="player-note"></div>
+  </div>
+  <ul class="checks">
+    <li>Процедурный рельеф, вода, туман и тени — всё считается в рантайме.</li>
+    <li>Цвета блоков, травы, скал и песка задаются формулами, а не картинками.</li>
+    <li>Физика контрапций своя: рейкасты подвески, контактные точки по блокам, демпфирование.</li>
+  </ul>
+</section>
+
+<section id="features">
+  <h2>Что внутри</h2>
+  <div class="grid" id="feature-grid"></div>
+</section>
+
+<section id="better">
+  <h2>Чем лучше Scrap Mechanic</h2>
+  <p class="lead">
+    Ниже — не маркетинг, а ответы на конкретные жалобы игроков
+    (по обсуждениям на Reddit, r/ScrapMechanic) и на боль Scrap Mechanic в целом.
+  </p>
+  <div class="table-wrap">
+    <table class="compare">
+      <thead>
+        <tr><th>Что болит / чего просят</th><th>Scrap Mechanic</th><th>ScrapForge</th></tr>
+      </thead>
+      <tbody id="compare-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="changelog">
+  <h2>Что добавлено в новых версиях</h2>
+  <div id="changelog-list"></div>
+</section>
+
+<section id="downloads">
+  <h2>Скачать</h2>
+  <p class="lead">
+    Готовые сборки публикуются в разделе релизов. Вес одной сборки — около 10 МБ,
+    это весь движок, весь мир и все детали.
+  </p>
+  <div id="release-box" class="release-box">Загружаю список релизов…</div>
+  <div class="src-box">
+    <h3>Исходный код</h3>
+    <div class="code-row">
+      <code id="clone-cmd">git clone https://github.com/vanyachickenganidanya-lgtm/test.git &amp;&amp; cd test &amp;&amp; cargo run --release</code>
+      <button class="copy" data-copy="#clone-cmd">копировать</button>
+    </div>
+    <p>
+      <a href="https://github.com/vanyachickenganidanya-lgtm/test/archive/refs/heads/main.zip">Скачать ZIP исходников</a> ·
+      <a href="https://github.com/vanyachickenganidanya-lgtm/test/archive/refs/heads/main.tar.gz">tar.gz</a> ·
+      <a href="https://github.com/vanyachickenganidanya-lgtm/test">Открыть репозиторий</a>
+    </p>
+  </div>
+</section>
+
+<section id="controls">
+  <h2>Управление</h2>
+  <div class="grid2" id="controls-grid"></div>
+</section>
+
+<section id="limits">
+  <h2>Честно об ограничениях</h2>
+  <ul class="checks warn">
+    <li>Пока нет мультиплеера — это первое, что стоит сделать после стабилизации физики.</li>
+    <li>Нет выживания и сюжета: это чистая креативная песочница.</li>
+    <li>Поршень и подшипник работают как силовой привод и мотор, а не как настоящие шарниры.</li>
+    <li>Столкновения между двумя движущимися контрапциями пока не считаются.</li>
+    <li>В браузерной сборке нет сохранения на диск (нет файловой системы) — сохранения доступны в десктопной версии.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      ScrapForge — неофициальный фанатский проект, вдохновлённый Scrap Mechanic (Axolot Games).
+      Исходный код: <a href="https://github.com/vanyachickenganidanya-lgtm/test">github.com/vanyachickenganidanya-lgtm/test</a>
+    </p>
+    <p class="small">Сделано на Rust + Bevy. Ноль текстур, ноль ассетов, ноль телеметрии.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

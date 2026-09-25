@@ -3,6 +3,10 @@
 //! Everything (terrain, blocks, machines, UI) is generated at runtime: the game
 //! ships as a single binary with no asset files at all.
 
+// ScrapForge contains a lot of small helper functions that are useful for future
+// features (and for the console/blueprint tooling), so dead-code noise is muted here.
+#![allow(dead_code)]
+
 mod blocks;
 mod build;
 mod logic;
@@ -385,7 +389,8 @@ fn input_system(
                 let parts = build::parts_in_category(blocks::Category::ALL[editor.menu_category]);
                 let index = editor.menu_scroll * 10 + i as usize;
                 if let Some(part) = parts.get(index).copied() {
-                    editor.hotbar[editor.slot] = part;
+                    let slot = editor.slot;
+                    editor.hotbar[slot] = part;
                     editor.say(&format!("Selected {}", def(part).name));
                 }
             }
@@ -409,7 +414,8 @@ fn input_system(
                 Tool::Paint => Tool::Remove,
                 Tool::Remove => Tool::Build,
             };
-            editor.say(editor.tool.name());
+            let tool_name = editor.tool.name();
+            editor.say(tool_name);
         } else {
             editor.rot = (editor.rot + 1) % 4;
         }
@@ -455,6 +461,7 @@ fn input_system(
     // ---------------------------------------------------------- interaction
     let eye = player::eye_position(&player, &world);
     let dir = player::look_direction(player.yaw, player.pitch);
+    editor.hint = build::describe_hit(&world, current_hit(&world, &player).as_ref());
 
     if keys.just_pressed(KeyCode::KeyE) {
         if let Some(hit) = current_hit(&world, &player) {
@@ -469,6 +476,9 @@ fn input_system(
     if keys.just_pressed(KeyCode::KeyG) {
         build::toggle_lift(&mut world, &mut editor, &player, eye, dir);
     }
+    if editor.lifted.is_some() {
+        build::update_lifted(&mut world, &editor, &player, eye, dir);
+    }
     if keys.just_pressed(KeyCode::KeyC) && !ctrl {
         editor.tool = if editor.tool == Tool::Connect {
             Tool::Build
@@ -476,7 +486,8 @@ fn input_system(
             Tool::Connect
         };
         editor.connect_from = None;
-        editor.say(&format!("Tool: {}", editor.tool.name()));
+        let tool_name = editor.tool.name();
+        editor.say(&format!("Tool: {}", tool_name));
     }
 
     // ------------------------------------------------------------ mouse uses
@@ -514,7 +525,8 @@ fn input_system(
     if mouse.just_pressed(MouseButton::Middle) {
         if let HitKind::StaticBlock { cell } = hit.kind {
             if let Some(block) = world.blocks.get(&cell).copied() {
-                editor.hotbar[editor.slot] = block.part;
+                let slot = editor.slot;
+                editor.hotbar[slot] = block.part;
                 editor.color = block.color;
                 editor.say(&format!("Picked {}", def(block.part).name));
             }
@@ -1111,7 +1123,7 @@ fn camera_system(
     transform.translation = player::eye_position(&player, &world);
     transform.rotation = player::look_quat(player.yaw, player.pitch);
 
-    if let Projection::Perspective(perspective) = projection.as_mut() {
+    if let Projection::Perspective(perspective) = &mut *projection {
         perspective.fov = settings.fov.to_radians();
     }
 }

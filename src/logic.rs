@@ -129,7 +129,6 @@ pub fn tick_logic(world: &mut BlockWorld, player_pos: Vec3) -> bool {
                                 count = count.saturating_add(1);
                             }
                             if count >= 8 {
-                                count = 0;
                                 b.set_data(0);
                                 true
                             } else {
